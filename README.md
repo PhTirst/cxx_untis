@@ -1,2 +1,2 @@
-# cxx_untis
+# cxx_utils
 simple but useful c++ tookit
