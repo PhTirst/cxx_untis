@@ -41,20 +41,15 @@ namespace mjx {
             }
         }
 
-        ~fixed_thread_pool() {
-            std::unique_lock<std::mutex> lock(queue_mutex);
-            if(!should_shutdown){
-                lock.unlock();
-                stop();
-            }
-        }
-
-        void stop() {
+       ~fixed_thread_pool() {
             {
-                std::lock_guard<std::mutex> guard(queue_mutex);
+                std::unique_lock<std::mutex> lock(queue_mutex);
                 should_shutdown = true;
             }
             not_empty_cv.notify_all();
+            for(auto&thread :threads){
+                thread.join();
+            }
         }
 
         void submit_task(std::function<void()> task) {
